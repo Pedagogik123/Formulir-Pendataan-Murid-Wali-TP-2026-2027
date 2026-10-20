@@ -1,0 +1,701 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#172554">
+<title>Pendataan Murid Wali - SMA Negeri 1 Soe</title>
+
+<style>
+:root {
+  --navy: #172554;
+  --blue: #2563eb;
+  --light: #f1f5f9;
+  --white: #ffffff;
+  --green: #15803d;
+  --red: #b91c1c;
+  --text: #1e293b;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #e0e7ff, #f8fafc, #dbeafe);
+  color: var(--text);
+  min-height: 100vh;
+}
+header {
+  background: linear-gradient(120deg, #172554, #1d4ed8);
+  color: white;
+  text-align: center;
+  padding: 28px 15px;
+}
+header h1 { margin: 0 0 8px; font-size: clamp(21px, 4vw, 30px); }
+header p { margin: 5px 0; }
+.container { max-width: 1100px; margin: 25px auto; padding: 0 15px; }
+.card {
+  background: white;
+  padding: 24px;
+  margin-bottom: 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px #17255412;
+}
+h2 { color: var(--navy); margin-top: 0; }
+h3 { color: #1d4ed8; }
+.menu, .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+button {
+  border: 0;
+  padding: 11px 16px;
+  border-radius: 9px;
+  font-weight: bold;
+  cursor: pointer;
+  background: var(--blue);
+  color: white;
+}
+button:hover { filter: brightness(.93); }
+button.secondary { background: #475569; }
+button.green { background: var(--green); }
+button.danger { background: var(--red); }
+button.light { background: #dbeafe; color: #1e3a8a; }
+button:disabled { opacity: .6; cursor: not-allowed; }
+input, select, textarea {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  margin-top: 6px;
+  font: inherit;
+  background: white;
+}
+textarea { min-height: 85px; resize: vertical; }
+label { display: block; font-weight: bold; font-size: 14px; }
+.field { margin-bottom: 15px; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 16px;
+}
+.full { grid-column: 1 / -1; }
+.hidden { display: none !important; }
+.note {
+  padding: 12px;
+  background: #eff6ff;
+  border-left: 4px solid #2563eb;
+  border-radius: 7px;
+  line-height: 1.5;
+}
+.status { margin: 12px 0; font-weight: bold; }
+.success { color: var(--green); }
+.error { color: var(--red); }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 850px; }
+th, td {
+  padding: 11px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: #eff6ff; color: #172554; }
+td button { margin: 2px; padding: 8px 10px; }
+.stats { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 15px; }
+.stat {
+  background: #eff6ff;
+  padding: 15px;
+  border-radius: 10px;
+  flex: 1;
+  min-width: 140px;
+}
+.stat strong { display: block; font-size: 25px; color: #1d4ed8; margin-top: 6px; }
+footer { text-align: center; padding: 22px 12px; color: #475569; font-size: 14px; }
+hr { border: 0; border-top: 1px solid #e2e8f0; margin: 22px 0; }
+@media (max-width: 650px) {
+  .grid { grid-template-columns: 1fr; }
+  .full { grid-column: auto; }
+  .card { padding: 17px; }
+  button { padding: 10px 12px; }
+}
+</style>
+</head>
+
+<body>
+<header>
+  <h1>PENDATAAN MURID WALI</h1>
+  <p><strong>SMA NEGERI 1 SOE</strong></p>
+  <p>Tahun Ajaran 2026/2027</p>
+</header>
+
+<main class="container">
+
+  <section class="card" id="home">
+    <h2>Selamat Datang</h2>
+    <p>Aplikasi pendataan murid wali untuk kelas X, XI, dan XII.</p>
+    <div class="menu">
+      <button onclick="showPage('studentLogin')">Masuk Siswa</button>
+      <button class="secondary" onclick="showPage('teacherLogin')">Login Guru</button>
+    </div>
+    <p class="note">Siswa mengisi biodata dengan teliti. Guru dapat melihat, mencari, dan mengunduh data siswa melalui halaman guru.</p>
+  </section>
+
+  <section class="card hidden" id="studentLogin">
+    <h2>Masuk Siswa</h2>
+    <form id="studentLoginForm">
+      <div class="field">
+        <label for="loginName">Nama lengkap</label>
+        <input id="loginName" required>
+      </div>
+      <div class="field">
+        <label for="loginClass">Kelas</label>
+        <select id="loginClass" required>
+          <option value="">Pilih kelas</option>
+          <option>X">X</option>
+          <option>XI">XI</option>
+          <option>XII">XII</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="loginNisn">NISN (10 digit)</label>
+        <input id="loginNisn" inputmode="numeric" maxlength="10" pattern="[0-9]{10}" required>
+      </div>
+      <div class="actions">
+        <button type="submit">Lanjut Mengisi</button>
+        <button type="button" class="secondary" onclick="showPage('home')">Kembali</button>
+      </div>
+    </form>
+    <p id="studentLoginMsg" class="status"></p>
+  </section>
+
+  <section class="card hidden" id="studentFormPage">
+    <h2>Formulir Biodata Siswa</h2>
+    <p id="studentWelcome"></p>
+    <p class="note">Pastikan data yang dimasukkan benar. NISN digunakan untuk mengenali data siswa yang sudah tersimpan pada browser ini.</p>
+
+    <form id="biodataForm">
+      <h3>A. Identitas Siswa</h3>
+      <div class="grid">
+        <div class="field">
+          <label>Nama lengkap</label>
+          <input id="nama" required>
+        </div>
+        <div class="field">
+          <label>Kelas</label>
+          <input id="kelas" readonly>
+        </div>
+        <div class="field">
+          <label>NISN</label>
+          <input id="nisn" readonly>
+        </div>
+        <div class="field">
+          <label>Tempat lahir</label>
+          <input id="tempatLahir">
+        </div>
+        <div class="field">
+          <label>Tanggal lahir</label>
+          <input id="tanggalLahir" type="date">
+        </div>
+        <div class="field">
+          <label>Jenis kelamin</label>
+          <select id="jenisKelamin">
+            <option value="">Pilih</option>
+            <option>Laki-laki</option>
+            <option>Perempuan</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Agama</label>
+          <input id="agama">
+        </div>
+        <div class="field">
+          <label>Nomor HP siswa</label>
+          <input id="hpSiswa" type="tel">
+        </div>
+        <div class="field full">
+          <label>Email siswa (jika ada)</label>
+          <input id="email" type="email">
+        </div>
+      </div>
+
+      <h3>B. Alamat Siswa</h3>
+      <div class="grid">
+        <div class="field full">
+          <label>Alamat lengkap</label>
+          <textarea id="alamat"></textarea>
+        </div>
+        <div class="field">
+          <label>Desa/Kelurahan</label>
+          <input id="desa">
+        </div>
+        <div class="field">
+          <label>Kecamatan</label>
+          <input id="kecamatan">
+        </div>
+        <div class="field">
+          <label>Kabupaten/Kota</label>
+          <input id="kabupaten">
+        </div>
+        <div class="field">
+          <label>Provinsi</label>
+          <input id="provinsi">
+        </div>
+      </div>
+
+      <h3>C. Data Orang Tua/Wali</h3>
+      <div class="grid">
+        <div class="field">
+          <label>Nama ayah</label>
+          <input id="namaAyah">
+        </div>
+        <div class="field">
+          <label>Pekerjaan ayah</label>
+          <input id="pekerjaanAyah">
+        </div>
+        <div class="field">
+          <label>Nama ibu</label>
+          <input id="namaIbu">
+        </div>
+        <div class="field">
+          <label>Pekerjaan ibu</label>
+          <input id="pekerjaanIbu">
+        </div>
+        <div class="field">
+          <label>Nama wali (jika ada)</label>
+          <input id="namaWali">
+        </div>
+        <div class="field">
+          <label>Hubungan dengan wali</label>
+          <input id="hubunganWali">
+        </div>
+        <div class="field">
+          <label>Nomor HP orang tua/wali</label>
+          <input id="hpOrtu" type="tel">
+        </div>
+        <div class="field">
+          <label>Alamat orang tua/wali</label>
+          <input id="alamatOrtu">
+        </div>
+      </div>
+
+      <h3>D. Minat dan Rencana Masa Depan</h3>
+      <div class="grid">
+        <div class="field">
+          <label>Hobi</label>
+          <textarea id="hobi"></textarea>
+        </div>
+        <div class="field">
+          <label>Minat atau bakat</label>
+          <textarea id="minat"></textarea>
+        </div>
+        <div class="field full">
+          <label>Cita-cita</label>
+          <input id="citaCita">
+        </div>
+        <div class="field full">
+          <label>Rencana setelah lulus SMA</label>
+          <select id="rencana">
+            <option value="">Pilih rencana</option>
+            <option>Melanjutkan kuliah</option>
+            <option>Bekerja</option>
+            <option>Berwirausaha</option>
+            <option>Mengikuti pendidikan kedinasan</option>
+            <option>Lainnya</option>
+            <option>Belum menentukan</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label>Jurusan, kampus, pekerjaan, atau tujuan yang diinginkan</label>
+          <textarea id="tujuanLanjut"></textarea>
+        </div>
+        <div class="field full">
+          <label>Alasan memilih rencana tersebut</label>
+          <textarea id="alasan"></textarea>
+        </div>
+        <div class="field full">
+          <label>Harapan atau hal yang ingin disampaikan kepada wali kelas</label>
+          <textarea id="harapan"></textarea>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="green">Simpan Biodata</button>
+        <button type="button" class="secondary" onclick="showPage('home')">Keluar</button>
+      </div>
+      <p id="saveMsg" class="status"></p>
+    </form>
+  </section>
+
+  <section class="card hidden" id="teacherLogin">
+    <h2>Login Guru Wali</h2>
+    <form id="teacherLoginForm">
+      <div class="field">
+        <label for="teacherPassword">Sandi guru</label>
+        <input id="teacherPassword" type="password" required>
+      </div>
+      <div class="actions">
+        <button type="submit">Masuk</button>
+        <button type="button" class="secondary" onclick="showPage('home')">Kembali</button>
+      </div>
+    </form>
+    <p id="teacherLoginMsg" class="status"></p>
+  </section>
+
+  <section class="card hidden" id="teacherDashboard">
+    <h2>Dashboard Guru Wali</h2>
+    <div class="menu">
+      <button class="light" onclick="showPage('home')">Beranda</button>
+      <button class="green" onclick="exportCSV()">Unduh Data Excel (CSV)</button>
+      <button class="danger" onclick="deleteAllStudents()">Hapus Semua Data</button>
+      <button class="secondary" onclick="teacherLogout()">Keluar Guru</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat">Jumlah seluruh siswa<strong id="totalStudents">0</strong></div>
+      <div class="stat">Kelas X<strong id="totalX">0</strong></div>
+      <div class="stat">Kelas XI<strong id="totalXI">0</strong></div>
+      <div class="stat">Kelas XII<strong id="totalXII">0</strong></div>
+    </div>
+
+    <div class="field">
+      <label for="searchStudent">Cari nama, NISN, atau kelas</label>
+      <input id="searchStudent" placeholder="Ketik kata pencarian...">
+    </div>
+
+    <p class="note">Gunakan tombol Hapus pada baris siswa untuk menghapus satu data. Penghapusan tidak dapat dibatalkan.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Nama</th>
+            <th>Kelas</th>
+            <th>NISN</th>
+            <th>HP Siswa</th>
+            <th>HP Orang Tua/Wali</th>
+            <th>Rencana Setelah SMA</th>
+            <th>Tindakan</th>
+          </tr>
+        </thead>
+        <tbody id="studentTable"></tbody>
+      </table>
+    </div>
+    <p id="tableMsg" class="status"></p>
+  </section>
+
+</main>
+
+<footer>
+  Guru Wali: Dison Linome, S.Pd, Gr<br>
+  SMA Negeri 1 Soe · Tahun Ajaran 2026/2027
+</footer>
+
+<script>
+"use strict";
+
+const STORAGE_KEY = "SMAN1SOE_MURID_WALI_DEMO_2026";
+const TEACHER_PASSWORD = "GuruDemo2026!";
+
+let currentStudent = null;
+let teacherLoggedIn = false;
+
+const fields = [
+  "nama", "kelas", "nisn", "tempatLahir", "tanggalLahir",
+  "jenisKelamin", "agama", "hpSiswa", "email", "alamat",
+  "desa", "kecamatan", "kabupaten", "provinsi", "namaAyah",
+  "pekerjaanAyah", "namaIbu", "pekerjaanIbu", "namaWali",
+  "hubunganWali", "hpOrtu", "alamatOrtu", "hobi", "minat",
+  "citaCita", "rencana", "tujuanLanjut", "alasan", "harapan"
+];
+
+function getStudents() {
+  try {
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveStudents(students) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(students));
+}
+
+function showPage(pageId) {
+  document.querySelectorAll("main > section").forEach(section => {
+    section.classList.add("hidden");
+  });
+  document.getElementById(pageId).classList.remove("hidden");
+
+  if (pageId === "teacherDashboard") renderStudents();
+}
+
+function readForm() {
+  const student = {};
+  fields.forEach(id => {
+    student[id] = document.getElementById(id).value.trim();
+  });
+  student.updatedAt = new Date().toISOString();
+  return student;
+}
+
+function fillForm(student) {
+  fields.forEach(id => {
+    document.getElementById(id).value = student[id] || "";
+  });
+}
+
+document.getElementById("studentLoginForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const name = document.getElementById("loginName").value.trim();
+  const className = document.getElementById("loginClass").value;
+  const nisn = document.getElementById("loginNisn").value.trim();
+  const message = document.getElementById("studentLoginMsg");
+
+  if (!/^[0-9]{10}$/.test(nisn)) {
+    message.className = "status error";
+    message.textContent = "NISN harus terdiri dari 10 angka.";
+    return;
+  }
+
+  currentStudent = { nama: name, kelas: className, nisn };
+  document.getElementById("studentWelcome").textContent =
+    "Selamat datang, " + name + " · Kelas " + className;
+
+  const existing = getStudents().find(s => s.nisn === nisn);
+  if (existing) {
+    fillForm(existing);
+    message.textContent = "";
+  } else {
+    document.getElementById("biodataForm").reset();
+    document.getElementById("nama").value = name;
+    document.getElementById("kelas").value = className;
+    document.getElementById("nisn").value = nisn;
+  }
+
+  document.getElementById("kelas").value = className;
+  document.getElementById("nisn").value = nisn;
+  showPage("studentFormPage");
+});
+
+document.getElementById("biodataForm").addEventListener("submit", event => {
+  event.preventDefault();
+  if (!currentStudent) return;
+
+  const student = readForm();
+  student.nama = student.nama || currentStudent.nama;
+  student.kelas = currentStudent.kelas;
+  student.nisn = currentStudent.nisn;
+
+  const students = getStudents();
+  const index = students.findIndex(s => s.nisn === student.nisn);
+
+  if (index >= 0) {
+    students[index] = { ...students[index], ...student };
+  } else {
+    student.createdAt = new Date().toISOString();
+    students.push(student);
+  }
+
+  try {
+    saveStudents(students);
+    const msg = document.getElementById("saveMsg");
+    msg.className = "status success";
+    msg.textContent = "Biodata berhasil disimpan pada browser ini.";
+  } catch (error) {
+    const msg = document.getElementById("saveMsg");
+    msg.className = "status error";
+    msg.textContent = "Data gagal disimpan. Periksa ruang penyimpanan browser.";
+  }
+});
+
+document.getElementById("teacherLoginForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const password = document.getElementById("teacherPassword").value;
+
+  if (password !== TEACHER_PASSWORD) {
+    const msg = document.getElementById("teacherLoginMsg");
+    msg.className = "status error";
+    msg.textContent = "Sandi guru tidak sesuai.";
+    return;
+  }
+
+  teacherLoggedIn = true;
+  document.getElementById("teacherPassword").value = "";
+  document.getElementById("teacherLoginMsg").textContent = "";
+  showPage("teacherDashboard");
+});
+
+function teacherLogout() {
+  teacherLoggedIn = false;
+  showPage("home");
+}
+
+document.getElementById("searchStudent").addEventListener("input", renderStudents);
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;",
+    '"': "&quot;", "'": "&#39;"
+  })[char]);
+}
+
+function renderStudents() {
+  if (!teacherLoggedIn) return;
+
+  const students = getStudents();
+  const query = document.getElementById("searchStudent").value.trim().toLowerCase();
+
+  document.getElementById("totalStudents").textContent = students.length;
+  document.getElementById("totalX").textContent =
+    students.filter(s => s.kelas === "X").length;
+  document.getElementById("totalXI").textContent =
+    students.filter(s => s.kelas === "XI").length;
+  document.getElementById("totalXII").textContent =
+    students.filter(s => s.kelas === "XII").length;
+
+  const filtered = students.filter(s =>
+    [s.nama, s.nisn, s.kelas].some(value =>
+      String(value || "").toLowerCase().includes(query)
+    )
+  );
+
+  const tbody = document.getElementById("studentTable");
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8">Belum ada data yang cocok.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map((s, index) => `
+    <tr>
+      <td>${index + 1}</td>
+      <td>${escapeHTML(s.nama)}</td>
+      <td>${escapeHTML(s.kelas)}</td>
+      <td>${escapeHTML(s.nisn)}</td>
+      <td>${escapeHTML(s.hpSiswa)}</td>
+      <td>${escapeHTML(s.hpOrtu)}</td>
+      <td>${escapeHTML(s.rencana)}</td>
+      <td>
+        <button class="light" onclick="viewStudent('${s.nisn}')">Lihat</button>
+        <button class="danger" onclick="deleteStudent('${s.nisn}')">Hapus</button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function viewStudent(nisn) {
+  if (!teacherLoggedIn) return;
+  const student = getStudents().find(s => s.nisn === nisn);
+  if (!student) {
+    alert("Data siswa tidak ditemukan.");
+    return;
+  }
+
+  const details = fields.map(id => {
+    const label = document.querySelector('label[for="' + id + '"]');
+    const title = label ? label.textContent : id;
+    return title + ": " + (student[id] || "-");
+  }).join("\n");
+
+  alert(details);
+}
+
+function deleteStudent(nisn) {
+  if (!teacherLoggedIn) return;
+
+  const students = getStudents();
+  const student = students.find(s => s.nisn === nisn);
+  if (!student) {
+    alert("Data siswa tidak ditemukan.");
+    return;
+  }
+
+  const confirmed = confirm(
+    "Hapus data siswa berikut?\n\nNama: " + student.nama +
+    "\nKelas: " + student.kelas +
+    "\nNISN: " + student.nisn +
+    "\n\nData yang dihapus tidak dapat dipulihkan."
+  );
+
+  if (!confirmed) return;
+
+  saveStudents(students.filter(s => s.nisn !== nisn));
+  renderStudents();
+  document.getElementById("tableMsg").className = "status success";
+  document.getElementById("tableMsg").textContent =
+    "Data siswa " + student.nama + " berhasil dihapus dari browser ini.";
+}
+
+function deleteAllStudents() {
+  if (!teacherLoggedIn) return;
+
+  const students = getStudents();
+  if (students.length === 0) {
+    alert("Belum ada data siswa untuk dihapus.");
+    return;
+  }
+
+  const firstConfirm = confirm(
+    "PERINGATAN: Semua data siswa (" + students.length +
+    " data) akan dihapus dari browser ini. Lanjutkan?"
+  );
+  if (!firstConfirm) return;
+
+  const secondConfirm = prompt(
+    'Untuk mengonfirmasi penghapusan semua data, ketik: HAPUS SEMUA'
+  );
+
+  if (secondConfirm !== "HAPUS SEMUA") {
+    alert("Penghapusan dibatalkan. Data tetap tersimpan.");
+    return;
+  }
+
+  saveStudents([]);
+  renderStudents();
+  document.getElementById("tableMsg").className = "status success";
+  document.getElementById("tableMsg").textContent =
+    "Semua data siswa telah dihapus dari browser ini.";
+}
+
+function exportCSV() {
+  if (!teacherLoggedIn) return;
+
+  const students = getStudents();
+  if (students.length === 0) {
+    alert("Belum ada data siswa untuk diunduh.");
+    return;
+  }
+
+  const headers = [
+    "Nama", "Kelas", "NISN", "Tempat Lahir", "Tanggal Lahir",
+    "Jenis Kelamin", "Agama", "HP Siswa", "Email", "Alamat",
+    "Desa", "Kecamatan", "Kabupaten", "Provinsi", "Nama Ayah",
+    "Pekerjaan Ayah", "Nama Ibu", "Pekerjaan Ibu", "Nama Wali",
+    "Hubungan Wali", "HP Orang Tua/Wali", "Alamat Orang Tua/Wali",
+    "Hobi", "Minat/Bakat", "Cita-cita", "Rencana Setelah SMA",
+    "Tujuan Lanjutan", "Alasan", "Harapan"
+  ];
+
+  const rows = students.map(s => fields.map(id => s[id] || ""));
+  const csvCell = value => '"' + String(value ?? "").replace(/"/g, '""') + '"';
+  const csv = [headers, ...rows].map(row => row.map(csvCell).join(";")).join("\r\n");
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "Data_Murid_Wali_SM​​AN1_Soe_2026-2027.csv".replace(/\u200b/g, "");
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+showPage("home");
+</script>
+</body>
+</html>
